@@ -239,7 +239,7 @@ class RestApiCmd(Resource):
 
     _rest_api_cmd_config = _config._rest_api_cmd_config
     _log = LogManger("rest_api_file")
-    _log = _log.file_handler(file_path = _rest_api_cmd_config._basic_api_config._log_path + "/rest_api_cmd.log", 
+    _log = _log.file_handler(file_path = _rest_api_cmd_config._basic_api_config._log_path + "/rest_api_file.log", 
         mode = "a", level = _rest_api_cmd_config._basic_api_config._log_level)
 
     def post(self):

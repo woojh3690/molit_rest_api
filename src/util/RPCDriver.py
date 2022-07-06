@@ -36,7 +36,7 @@ class RPCClient:
 
     def receive(self):
         while self.response is None:
-            self.connection.process_data_events()
+            self.connection.process_data_events(30)
 
         return self.response
 

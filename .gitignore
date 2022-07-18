@@ -2,3 +2,4 @@
 /conf
 /log
 /lib
+__pycache__/

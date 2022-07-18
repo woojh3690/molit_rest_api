@@ -285,7 +285,7 @@ class RestApiCmd(Resource):
 if __name__ == "__main__":
     # TLS 적용
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-    ssl_context.load_cert_chain(certfile='../conf/emqx.pem', keyfile='../conf/emqx.key')
+    ssl_context.load_cert_chain(certfile = HOME_PATH+'conf/emqx.pem', keyfile = HOME_PATH+'conf/emqx.key')
 
     # 앱 시작
     app.run(debug=False, host='0.0.0.0', port=7888, ssl_context=ssl_context)

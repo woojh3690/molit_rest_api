@@ -230,7 +230,7 @@ def uploadHDFS(request, dev_key, dirName):
     os.remove(src_path)
 
     responseMsg = '{"msg": [{"msg_header": {"user_key": "' + dev_key + \
-        '","msg_err_code": "1"},"msg_data": [{"debug": ""}]}]}'
+        '","msg_err_code": "1"},"msg_data": [{"debug": "None"}]}]}'
     return responseMsg
     
 @api.route('/rest_api_file')
@@ -265,13 +265,13 @@ class RestApiCmd(Resource):
             msg_data = msg['msg_data'][0]
 
             strMsgs = json.dumps(msgs)
-            self._log.debug("[" + websocket_id + "] # 1-1. Msg = " + strMsgs)
+            self._log.debug("[" + websocket_id + "] # 1. Msg = " + strMsgs)
 
             # DEV-FILE, UPLOAD 일 경우 HDFS 로 파일 업로드 하게 변경
-            self._log.debug("[" +  websocket_id + "] # 1-2 Upload File To Hdfs")
+            self._log.debug("[" +  websocket_id + "] # 2 Upload File To Hdfs")
             message = uploadHDFS(request, msg_header['user_key'], msg_data['values']['directory_name'])
             
-            self._log.debug("[" + websocket_id + "] # 3-2. Return CMD Result - limit")
+            self._log.debug("[" + websocket_id + "] # 3. Return CMD Result - limit")
             return Response(message, content_type="application/json", status=200)
         except Exception as e:
             err_msg = "[ErrorCode-520] Unexpected error: " + e.__str__()

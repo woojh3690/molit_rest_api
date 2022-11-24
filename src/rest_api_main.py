@@ -179,41 +179,21 @@ class RestApiCmd(Resource):
 
             self._log.debug("[" +  websocket_id + "] # 1. Receive Search Message")
             msg = request.json
-
-            self._log.debug("[" +  websocket_id + "] # 1-1. Make WebSession UUID")
             msg["msg"][0]["msg_header"]["websocket_id"] = websocket_id
-            strMsg = json.dumps(msg)
-            self._log.debug("[" + websocket_id + "] # 1-1. Msg = " + strMsg)
 
+            # 커멘더에 처리 요청
             rpc_client = RPCClient(self._rest_api_cmd_config._rabbitmq_rpc_config)
-
-            self._log.debug("[" +  websocket_id + "] # 1-2 Send Msg To RPC Queue")
-            rpc_client.send(strMsg)
-
-            self._log.debug("[" +  websocket_id + "] # 2. Wait Command Result Message Received")
+            rpc_client.send(json.dumps(msg))
             message = rpc_client.receive()
-
-            self._log.debug("[" + websocket_id + "] # 2. RPC Client Close")
             rpc_client.close()
-            
-            self._log.debug("[" + websocket_id + "] # 2-1. Parse Msg start")
-            result = str(message, 'utf-8')
-            self._log.debug("[" + websocket_id + "] # 2-1. Parse Msg = " + result)
-            
-            result_msg = json.loads(result)
-            ret_websocket_id = result_msg["msg"][0]["msg_header"]["websocket_id"]
-            
-            self._log.debug("[" + websocket_id + "] # 2-2. IF Own WebSession UUID?")
-            
-            if websocket_id == ret_websocket_id:
-                self._log.debug("[" + websocket_id + "] # 3. Send Cmd Result")
-                del(result_msg["msg"][0]["msg_header"]["websocket_id"])
 
-                self._log.debug("[" + websocket_id + "] # 3-1. IF CMD Result - limit")
-                result_msg = json.dumps(result_msg)
-                self._log.debug("[" + websocket_id + "] # 3-2. Return CMD Result - limit")
-                #return HttpResponse(result_msg, content_type="application/json; charset=UTF-8", status=200)                   
-                return Response(result_msg, content_type="application/json", status=200)
+            # 웹소켓 아이디 지우고 응답 완료
+            result_msg = json.loads(str(message, 'utf-8'))
+            ret_websocket_id = result_msg["msg"][0]["msg_header"]["websocket_id"]
+            if websocket_id == ret_websocket_id:
+                del(result_msg["msg"][0]["msg_header"]["websocket_id"])
+                self._log.debug("[" + websocket_id + "] # Return CMD Result - limit")                  
+                return Response(json.dumps(result_msg), content_type="application/json", status=200)
 
         except Exception as e:
             err_msg = "[ErrorCode-520] Unexpected error: " + e.__str__()

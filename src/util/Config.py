@@ -1,5 +1,4 @@
 import yaml
-import mysql.connector
 
 class BasicApiConfig:
     _log_path = 0
@@ -137,26 +136,7 @@ class Config:
         self._config_path = config_path
 
     def load_rest_api_keys(self):
-        conn = mysql.connector.connect(
-            host=self._rest_api_key_config._db_ip,
-            port=self._rest_api_key_config._db_port,
-            user=self._rest_api_key_config._db_id,
-            password=self._rest_api_key_config._db_passwd,
-            database=self._rest_api_key_config._db_name
-        )
-
-        cursor = conn.cursor()
-        query = self._rest_api_key_config._select_sql
-
-        cursor.execute(query)
-
-        rest_api_key_dict = dict()
-        for row in cursor:
-            rest_api_key_dict[row[1]] = 1
-        
-        conn.close()
-
-        return rest_api_key_dict
+        return {'b3e23345f5711f7259b783b409c466de37de1bce764bb5fede023461fdefba47': 1}
 
     def load_config(self):
         with open(self._config_path, 'r') as f:

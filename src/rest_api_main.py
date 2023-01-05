@@ -26,14 +26,6 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024 #파일 업로드 용량 제한 단위:바이트
 api = Api(app)
 
-jpype.startJVM(jpype.getDefaultJVMPath(), "-Djava.class.path=" + HOME_PATH + "lib/IWAZFileUploader.jar",
-    "-Dfile.encoding=UTF-8", convertStrings=True)
-
-jpypeIWAZDriverPkg = jpype.JPackage('kr.co.iwaz.SmartHousingPlatform.Driver') # get the package
-
-iwazDriver = jpypeIWAZDriverPkg.IWAZSmartHousingDriver(HOME_PATH + 'conf')
-
-
 @api.route('/rest_api_insert')
 class RestApiCrawl(Resource):
 
@@ -199,67 +191,6 @@ class RestApiCmd(Resource):
             err_msg = "[ErrorCode-520] Unexpected error: " + e.__str__()
             self._log.error("[" + websocket_id + "] " + err_msg)
             return Response(status=520)
-
-def uploadHDFS(request, dev_key, dirName):
-    f = request.files['file']
-    src_path = './' + os.path.basename(f.filename)
-    f.save(src_path)
-    f.close()
-
-    iwazDriver.devFileUpload(dev_key, src_path, dirName)
-    os.remove(src_path)
-
-    responseMsg = '{"msg": [{"msg_header": {"user_key": "' + dev_key + \
-        '","msg_err_code": "1"},"msg_data": [{"debug": "None"}]}]}'
-    return responseMsg
-    
-@api.route('/rest_api_file')
-class RestApiCmd(Resource):
-    global _config
-
-    _rest_api_cmd_config = _config._rest_api_cmd_config
-    _log = LogManger("rest_api_file")
-    _log = _log.file_handler(file_path = _rest_api_cmd_config._basic_api_config._log_path + "/rest_api_file.log", 
-        mode = "a", level = _rest_api_cmd_config._basic_api_config._log_level)
-
-    def post(self):
-        try:
-            websocket_id = str(uuid.uuid1())
-
-            if request.headers['REST_API_KEY'] not in self._rest_api_cmd_config._rest_api_key_dict:
-                err_msg = "[ErrorCode-421] Http header REST_API_KEY Wrong"
-                self._log.error("[" + websocket_id + "] " + err_msg)
-                return Response(err_msg, status=412)
-
-            if "multipart/form-data" not in request.headers['CONTENT_TYPE']:
-                err_msg = "[ErrorCode-421] Http header CONTENT_TYPE Wrong"
-                self._log.error("[" + websocket_id + "] " + err_msg)
-                return Response(err_msg, status=412)
-
-            self._log.debug("[" +  websocket_id + "] # 1. Receive Search Message")
-            msgs = json.loads(request.form['json'])
-
-            # 데이터 추출
-            msg = msgs['msg'][0]
-            msg_header = msg['msg_header']
-            msg_data = msg['msg_data'][0]
-
-            strMsgs = json.dumps(msgs)
-            self._log.debug("[" + websocket_id + "] # 1. Msg = " + strMsgs)
-
-            # DEV-FILE, UPLOAD 일 경우 HDFS 로 파일 업로드 하게 변경
-            self._log.debug("[" +  websocket_id + "] # 2 Upload File To Hdfs")
-            message = uploadHDFS(request, msg_header['user_key'], msg_data['values']['directory_name'])
-            
-            self._log.debug("[" + websocket_id + "] # 3. Return CMD Result - limit")
-            return Response(message, content_type="application/json", status=200)
-        except Exception as e:
-            err_msg = "[ErrorCode-520] Unexpected error: " + e.__str__()
-            print(err_msg)
-            self._log.error("[" + websocket_id + "] " + err_msg)
-            return Response(status=520)
-
-
 
 if __name__ == "__main__":
     # 앱 시작

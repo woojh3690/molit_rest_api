@@ -129,8 +129,6 @@ class Config:
     _rest_api_crawl_config = 0
     _rest_api_sel_config = 0
     _rest_api_cmd_config = 0
-    _rest_api_upload_config = 0
-    _rest_api_test_config = 0
 
     def __init__(self, config_path="/root/rest_api/conf/RestApiConfig.yaml"):
         self._config_path = config_path
@@ -156,9 +154,3 @@ class Config:
 
         rest_api_cmd_obj = config_obj['rest_api_cmd_config']
         self._rest_api_cmd_config = RestApiCmdConfig(rest_api_basic_config, rest_api_key_dict, rest_api_cmd_obj)
-
-        rest_api_upload_obj = config_obj['rest_api_upload_config']
-        self._rest_api_upload_config = RestApiUploadConfig(rest_api_basic_config, rest_api_key_dict, rest_api_upload_obj)
-        
-        rest_api_test_obj = config_obj['rest_api_test_config']
-        self._rest_api_test_config = RestApiTestConfig(rest_api_basic_config, rest_api_key_dict, rest_api_test_obj)

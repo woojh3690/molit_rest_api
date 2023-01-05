@@ -16,10 +16,7 @@ import sys
 import uuid
 import json
 
-# /root/rest_api/lib
-HOME_PATH = sys.argv[1]
-
-_config = Config(config_path = HOME_PATH + "conf/RestApiConfig.yaml")
+_config = Config(config_path = "/root/rest_api/conf/RestApiConfig.yaml")
 _config.load_config()
 
 app = Flask(__name__)

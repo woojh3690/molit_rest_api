@@ -145,9 +145,7 @@ class Config:
         rest_api_basic_config_obj = config_obj['rest_api_basic_config']
         self._rest_api_basic_config = BasicApiConfig(rest_api_basic_config_obj['log_path'], rest_api_basic_config_obj['log_level'])
         rest_api_basic_config = self._rest_api_basic_config
-        
-        rest_api_key_obj = config_obj['rest_api_key_config']
-        self._rest_api_key_config = RestApiKeyConfig(rest_api_key_obj['db_ip'], rest_api_key_obj['db_port'], rest_api_key_obj['db_id'], rest_api_key_obj['db_passwd'], rest_api_key_obj['db_name'], rest_api_key_obj['select_sql'])
+    
         rest_api_key_dict = self.load_rest_api_keys()
 
         rest_api_crawl_obj = config_obj['rest_api_crawl_config']

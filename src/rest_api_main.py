@@ -46,7 +46,7 @@ class RestApiCrawl(Resource):
                 self._log.error("[" + websocket_id + "] " + err_msg)
                 return Response(err_msg, status=412)
 
-            if request.headers['CONTENT_TYPE'] != "application/json":
+            if "application/json" not in request.headers['CONTENT_TYPE']:
                 err_msg = "[ErrorCode-412] Http header CONTENT_TYPE Wrong"
                 self._log.error("[" + websocket_id + "] " + err_msg)
                 return Response(err_msg, status=412)
@@ -83,7 +83,7 @@ class RestApiSelect(Resource):
             ret = request.headers['REST_API_KEY'] in self._rest_api_sel_config._rest_api_key_dict
 
             if ret == True:
-                if request.headers['CONTENT_TYPE'] == "application/json":
+                if "application/json" in request.headers['CONTENT_TYPE']:
                     
                     self._log.debug("[" +  websocket_id + "] # 1. Receive Search Message")
                     msg = request.json
@@ -161,7 +161,7 @@ class RestApiCmd(Resource):
                 self._log.error("[" + websocket_id + "] " + err_msg)
                 return Response(err_msg, status=412)
 
-            if request.headers['CONTENT_TYPE'] != "application/json":
+            if "application/json" not in request.headers['CONTENT_TYPE']:
                 err_msg = "[ErrorCode-421] Http header CONTENT_TYPE Wrong"
                 self._log.error("[" + websocket_id + "] " + err_msg)
                 return Response(err_msg, status=412)
